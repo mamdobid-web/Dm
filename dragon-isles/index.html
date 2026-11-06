@@ -1,0 +1,628 @@
+<title>جزيرة التنانين</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: one-screen island app — sticky resource bar, scrolling view, fixed tab bar. Single dusk-lagoon look by choice. */
+:root{
+  --sea:#0d2a33; --sea2:#15414d; --basalt:#1f4550; --basalt2:#295866; --line:#3a6b78;
+  --sand:#f2dcae; --ink:#f7f1e3; --muted:#a6c4c3;
+  --ember:#ff9142; --ember-d:#b4541c; --gold:#ffd04d; --leaf:#9ee07f; --gem:#7fe6d6; --danger:#ff6f6f;
+  --display:'Lalezar','Tajawal',system-ui,sans-serif;
+  --body:'Tajawal',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:radial-gradient(120% 70% at 50% -10%,#2a6a74 0%,var(--sea2) 35%,var(--sea) 75%) fixed,var(--sea);color:var(--ink);font-family:var(--body);font-size:15px;}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sea)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.app{max-width:1000px;margin:0 auto;min-height:100%;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 110px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:0}
+h2{font-size:26px} h3{font-size:20px}
+p{margin:0;line-height:1.6}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums;font-family:var(--display);letter-spacing:.02em}
+
+/* HUD */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-block:12px;background:linear-gradient(var(--sea) 70%,transparent)}
+.brand{font-family:var(--display);font-size:24px;color:var(--sand);margin-inline-end:auto;line-height:1}
+.brand small{display:block;font-family:var(--body);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.pill{display:flex;align-items:center;gap:6px;background:#0a222a;border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 6px;font-size:18px;min-width:84px}
+.pill svg{width:22px;height:22px;flex:none}
+
+/* Buttons */
+.btn{font-family:var(--display);font-size:17px;line-height:1;border:none;border-radius:12px;padding:10px 16px 9px;background:var(--ember);color:#2b1204;box-shadow:0 3px 0 var(--ember-d);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .08s}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ember-d)}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.btn.alt{background:var(--sand);box-shadow:0 3px 0 #a88c5a}
+.btn.gem{background:var(--gem);box-shadow:0 3px 0 #2f9384}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.sm{font-size:14px;padding:7px 11px 6px;border-radius:10px}
+.btn svg{width:16px;height:16px}
+button:focus-visible,.drgbtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* Goal banner */
+.goal{display:flex;align-items:center;gap:14px;background:linear-gradient(90deg,#3b2a14,#22404a);border:1px solid #6a5426;border-radius:16px;padding:12px 14px;margin-block:4px 18px}
+.goal .tag{font-family:var(--display);color:var(--gold);font-size:14px;white-space:nowrap}
+.goal p{flex:1;min-width:0}
+.reward{display:inline-flex;gap:4px;align-items:center;font-size:14px;color:var(--sand)}
+.reward svg{width:16px;height:16px}
+
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-block:8px 12px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+
+/* Habitat */
+.hab{background:var(--basalt);border-radius:20px;overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column}
+.hab-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--c);color:#14262b}
+.ground{position:relative;height:150px;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding-bottom:12px;background:radial-gradient(70% 38% at 50% 88%,var(--g1) 0 60%,transparent 61%),linear-gradient(#173842,#1c4853)}
+.ground::after{content:"";position:absolute;inset:auto 18% 6px;height:10px;border-radius:50%;background:rgba(0,0,0,.25);filter:blur(4px)}
+.drgbtn{background:none;border:none;padding:0;cursor:pointer;position:relative;z-index:1;border-radius:12px}
+.drgbtn .lv{position:absolute;top:2px;inset-inline-start:4px;font-family:var(--display);font-size:13px;background:#0a222a;border-radius:8px;padding:1px 6px;color:var(--sand)}
+.hab-bot{display:flex;align-items:center;gap:10px;padding:10px 14px 12px}
+.bar{flex:1;height:8px;background:#0a222a;border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:9px;transition:width .6s}
+.bar.food i{background:var(--leaf)} .bar.gem i{background:var(--gem)}
+.empty-slot{width:64px;height:54px;border:2px dashed rgba(255,255,255,.18);border-radius:50%;margin-bottom:6px}
+.build{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:240px;border:2px dashed var(--line);border-radius:20px;color:var(--muted);text-align:center;padding:20px}
+
+/* Dragon svg */
+.drg{width:96px;height:80px;overflow:visible;display:block}
+.drg .bob{animation:bob 2.6s ease-in-out infinite}
+.drg .wing{transform-box:fill-box;transform-origin:20% 100%;animation:flap 1.3s ease-in-out infinite}
+.drg .wing.back{animation-delay:-.2s}
+.drg .tail{transform-box:fill-box;transform-origin:100% 50%;animation:tail 2.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+@keyframes flap{50%{transform:rotate(-14deg) scaleY(.86)}}
+@keyframes tail{50%{transform:rotate(8deg)}}
+.happy{animation:hop .5s ease}
+@keyframes hop{40%{transform:translateY(-14px) scale(1.06)}}
+
+/* Farm */
+.farm{background:var(--basalt);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.soil{height:96px;border-radius:14px;background:repeating-linear-gradient(0deg,#4a3322 0 10px,#5a3e29 10px 20px);display:flex;align-items:flex-end;justify-content:space-around;padding:8px 12px;overflow:hidden}
+.sprout{width:18px;border-radius:9px 9px 2px 2px;background:var(--leaf);transition:height .8s;box-shadow:inset -4px 0 0 rgba(0,0,0,.15)}
+.sprout.ripe{background:var(--cc)}
+.crops{display:grid;gap:8px}
+.crop{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#173a44;border-radius:12px;padding:8px 10px}
+.crop b{font-family:var(--display);font-weight:400;font-size:17px}
+.crop small{display:block;color:var(--muted);font-size:12px}
+
+/* Cave */
+.cave{background:linear-gradient(#1a3138,#13262c);border:1px solid var(--line);border-radius:22px;padding:18px}
+.pair{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-block:14px}
+.slot{min-height:150px;border-radius:16px;background:#0e2026;border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px;cursor:pointer;color:var(--muted);font:inherit;text-align:center}
+.slot.filled{border-style:solid;border-color:var(--ember);color:var(--ink)}
+.heart{font-family:var(--display);font-size:28px;color:var(--ember)}
+.outcomes{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px}
+.pick{background:#173a44;border:1.5px solid transparent;border-radius:14px;padding:6px;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;align-items:center}
+.pick[aria-pressed="true"]{border-color:var(--ember);background:#2a3c3a}
+.pick:disabled{opacity:.4;cursor:not-allowed}
+.pick span{font-size:13px}
+.eggs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.egg{background:var(--basalt);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.egg svg{width:56px;height:70px}
+.egg.ready svg{animation:wobble 1s ease-in-out infinite}
+@keyframes wobble{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+
+/* Arena */
+.ladder{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-block:10px 16px}
+.rung{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-size:20px;background:#0e2026;border:1.5px solid var(--line);color:var(--muted)}
+.rung.done{background:#284b3a;border-color:var(--leaf);color:var(--leaf)}
+.rung.now{background:var(--ember);color:#2b1204;border-color:var(--ember)}
+.rung.boss{border-style:dashed}
+.stage{direction:ltr;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding:16px 10px 10px;border-radius:22px;background:radial-gradient(90% 40% at 50% 92%,#5b4630 0 60%,transparent 61%),linear-gradient(#2a2340,#1a3b46);min-height:220px}
+.fighter{flex:0 1 47%;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;direction:rtl}
+.fighter .drg{width:150px;height:125px}
+.foe .drg{transform:scaleX(-1)}
+.hp{width:100%;max-width:200px;display:flex;flex-direction:column;gap:3px;font-size:14px}
+.hp b{font-family:var(--display);font-weight:400;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hp .bar{flex:none;width:100%}
+.hp .bar i{background:var(--leaf)}
+.hp .bar.low i{background:var(--danger)}
+.hit{animation:hit .45s ease}
+@keyframes hit{20%{transform:translateX(10px);filter:brightness(2.2)}60%{transform:translateX(-6px)}}
+.lunge-r{animation:lr .4s ease}.lunge-l{animation:ll .4s ease}
+@keyframes lr{40%{transform:translateX(40px)}}@keyframes ll{40%{transform:translateX(-40px)}}
+.moves{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.log{margin-top:12px;background:#0c2027;border-radius:14px;padding:10px 14px;min-height:72px;font-size:14px;line-height:1.7}
+.log p:first-child{color:var(--sand)}
+
+/* Shop */
+.shop-item{background:var(--basalt);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:12px;align-items:center}
+.shop-item>div{flex:1;min-width:0}
+.shop-item .drg{width:84px;height:70px;flex:none}
+.goals li{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.goals{list-style:none;padding:0;margin:0}
+.goals .st{font-family:var(--display);width:26px;text-align:center;color:var(--muted)}
+.goals li.ok .st{color:var(--leaf)} .goals li.cur{color:var(--sand)}
+
+/* Tabs */
+.tabs{position:fixed;inset:auto 0 0;z-index:6;background:#081c22;border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+.tabs-in{display:flex;gap:4px;width:100%;max-width:620px}
+.tab{flex:1;background:none;border:none;color:var(--muted);font-family:var(--display);font-size:16px;padding:8px 4px 6px;border-radius:12px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab svg{width:24px;height:24px}
+.tab[aria-current="page"]{color:var(--ink);background:#153a44}
+.tab .dot{position:absolute;top:4px;inset-inline-end:22%;width:9px;height:9px;border-radius:50%;background:var(--ember)}
+
+/* Modal, toast, floaters */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(3,14,18,.7);display:flex;align-items:flex-end;justify-content:center;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{width:100%;max-width:460px;background:var(--basalt);border:1px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;max-height:90%;overflow:auto}
+.sheet .hero{display:grid;place-items:center;background:radial-gradient(60% 40% at 50% 85%,var(--g1) 0 60%,transparent 61%),#173842;border-radius:18px;padding:14px}
+.sheet .hero .drg{width:200px;height:166px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:#173a44;border-radius:12px;padding:8px 4px}
+.stats b{display:block;font-family:var(--display);font-weight:400;font-size:22px}
+.stats small{color:var(--muted);font-size:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.toast{position:fixed;z-index:30;top:calc(70px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:var(--sand);color:#2b1d07;font-weight:700;padding:10px 18px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:calc(100% - 32px);text-align:center}
+.float{position:fixed;z-index:25;pointer-events:none;font-family:var(--display);font-size:22px;animation:rise 1.1s ease-out forwards;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+@keyframes rise{to{transform:translateY(-60px);opacity:0}}
+
+@media (max-width:520px){
+  .brand{font-size:20px;width:100%}
+  .pill{min-width:0;flex:1;font-size:16px}
+  .pair{grid-template-columns:1fr 1fr}.pair .heart{display:none}
+  .fighter .drg{width:118px;height:100px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app" id="app" dir="rtl" lang="ar">
+  <header class="hud" id="hud"></header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" id="tabs" dir="rtl"></nav>
+<div class="modal" id="modal" hidden dir="rtl"></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+document.documentElement.lang='ar';document.documentElement.dir='rtl';
+
+/* ---------- Data ---------- */
+const EL={
+  fire:{n:'نار',c:'#ff7f45',d:'#b0401b',l:'#ffd6a3'},
+  water:{n:'ماء',c:'#45a9e6',d:'#1e5f96',l:'#c5ebff'},
+  plant:{n:'نبات',c:'#72c64f',d:'#3a7c28',l:'#dcf6bb'},
+  rock:{n:'صخر',c:'#b09479',d:'#62503f',l:'#eadbc9'},
+  storm:{n:'برق',c:'#ab84f3',d:'#5b3ea6',l:'#ece0ff'},
+};
+const ELS=Object.keys(EL);
+const BEATS={fire:'plant',plant:'rock',rock:'storm',storm:'water',water:'fire'};
+const SP={
+  shula:{n:'شُعلة',e:['fire'],g:3,price:80},
+  ushba:{n:'عُشبة',e:['plant'],g:3,price:100},
+  mawja:{n:'موجة',e:['water'],g:3,price:150},
+  sawwan:{n:'صوّان',e:['rock'],g:4,price:250},
+  raad:{n:'رعد',e:['storm'],g:5,price:400},
+  dabab:{n:'ضباب',e:['fire','water'],g:7},
+  ramad:{n:'رماد',e:['fire','plant'],g:7},
+  burkan:{n:'بركان',e:['fire','rock'],g:8},
+  nayzak:{n:'نيزك',e:['fire','storm'],g:9},
+  mustanqa:{n:'مستنقع',e:['water','plant'],g:7},
+  marjan:{n:'مرجان',e:['water','rock'],g:8},
+  iasar:{n:'إعصار',e:['water','storm'],g:9},
+  tuhlub:{n:'طُحلب',e:['plant','rock'],g:8},
+  rabi:{n:'ربيع',e:['plant','storm'],g:9},
+  sada:{n:'صدى',e:['rock','storm'],g:10},
+  fajr:{n:'الفجر',e:['fire','water','plant','rock','storm'],g:25,leg:true},
+};
+const HAB_BASE={fire:60,plant:100,water:150,rock:250,storm:400};
+const HAB_SLOTS=3, HAB_CAP=400, MAX_HABS=10, MAX_LVL=10, EGG_SLOTS=2, MAX_FARMS=6;
+const CROPS={
+  wheat:{n:'قمح ذهبي',cost:10,food:20,t:30e3,c:'#f1c44f'},
+  berry:{n:'توت الجمر',cost:40,food:90,t:120e3,c:'#ff5d5d'},
+  pumpkin:{n:'يقطين عملاق',cost:120,food:300,t:300e3,c:'#ff9a2e'},
+};
+const GOALS=[
+  {t:'اجمع الذهب من موطن تنينك',c:s=>s.st.collect>=1,r:{gold:40}},
+  {t:'ازرع محصولًا في المزرعة',c:s=>s.st.plant>=1,r:{food:30}},
+  {t:'احصد محصولًا ناضجًا',c:s=>s.st.harvest>=1,r:{gold:60}},
+  {t:'أطعم تنينًا حتى المستوى 3',c:s=>s.dragons.some(d=>d.lvl>=3),r:{gems:2}},
+  {t:'ابنِ موطنًا جديدًا من المتجر',c:s=>s.habitats.length>=2,r:{gold:80}},
+  {t:'اشترِ بيضة تنين وافقسها',c:s=>s.st.hatch>=1,r:{food:80}},
+  {t:'زاوج تنينين في كهف التزاوج',c:s=>s.st.breed>=1,r:{gems:3}},
+  {t:'اربح أول معركة في الحلبة',c:s=>s.st.wins>=1,r:{gold:200}},
+  {t:'احصل على تنين هجين بعنصرين',c:s=>s.dragons.some(d=>SP[d.sp].e.length===2),r:{gems:5}},
+  {t:'امتلك 6 تنانين',c:s=>s.dragons.length>=6,r:{gold:500}},
+  {t:'اربح 5 معارك',c:s=>s.st.wins>=5,r:{gems:10}},
+  {t:'ارفع تنينًا إلى المستوى 10',c:s=>s.dragons.some(d=>d.lvl>=10),r:{gems:8}},
+  {t:'احصل على تنين الفجر الأسطوري',c:s=>s.dragons.some(d=>d.sp==='fajr'),r:{gems:30}},
+];
+
+/* ---------- State ---------- */
+const KEY='dragon-isles-v1';
+function newState(){
+  return {gold:250,food:60,gems:6,nid:4,goal:0,stage:0,saved:Date.now(),
+    habitats:[{id:1,el:'fire',gold:0}],
+    dragons:[{id:2,sp:'shula',lvl:1,hab:1}],
+    farms:[{id:3,crop:null,ready:0}],
+    eggs:[],breed:null,
+    st:{collect:0,plant:0,harvest:0,hatch:0,breed:0,wins:0}};
+}
+let S;
+function load(){
+  try{const raw=localStorage.getItem(KEY);if(raw)return JSON.parse(raw)}catch(e){}
+  return null;
+}
+function save(){S.saved=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const now=()=>Date.now();
+const fmt=n=>Math.floor(n).toLocaleString('en-US');
+function fmtT(ms){const s=Math.max(0,Math.ceil(ms/1000));const m=Math.floor(s/60);return m>=60?`${Math.floor(m/60)}س ${m%60}د`:`${m}:${String(s%60).padStart(2,'0')}`}
+const gemCost=ms=>Math.max(1,Math.ceil(ms/30000));
+const dname=sp=>'تنين '+SP[sp].n;
+const rate=d=>SP[d.sp].g*d.lvl; // gold per minute
+const feedCost=d=>d.lvl*15;
+const inHab=h=>S.dragons.filter(d=>d.hab===h.id);
+const habRate=h=>inHab(h).reduce((a,d)=>a+rate(d),0);
+const byId=(arr,id)=>arr.find(x=>x.id==id);
+const canPay=c=>(c.gold||0)<=S.gold&&(c.food||0)<=S.food&&(c.gems||0)<=S.gems;
+function pay(c){S.gold-=c.gold||0;S.food-=c.food||0;S.gems-=c.gems||0}
+function give(c){S.gold+=c.gold||0;S.food+=c.food||0;S.gems+=c.gems||0}
+
+const ICON={
+  gold:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ffd04d"/><circle cx="12" cy="12" r="7" fill="none" stroke="#c48a12" stroke-width="2"/><path d="M12 8v8M9.5 10h5" stroke="#c48a12" stroke-width="2" stroke-linecap="round"/></svg>',
+  food:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c-5 0-8-4-8-8 0-3 2-5 4.5-5 1.5 0 2.5.6 3.5 1.4 1-.8 2-1.4 3.5-1.4C18 8 20 10 20 13c0 4-3 8-8 8z" fill="#ff6b5a"/><path d="M12 9c0-3 1.5-5 4-6-1 2-1.5 3.6-2 6" fill="#9ee07f"/></svg>',
+  gems:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#7fe6d6"/><path d="M2 9h20M8 3l4 18 4-18" stroke="#2f9384" stroke-width="1.4" fill="none"/></svg>',
+};
+const ic=k=>ICON[k];
+function costHTML(c){return Object.entries(c).filter(([,v])=>v).map(([k,v])=>`<span class="reward">${ic(k)}<span class="num">${fmt(v)}</span></span>`).join(' ')}
+function chips(sp){return SP[sp].leg?`<span class="chip" style="--c:linear-gradient(90deg,#ff7f45,#45a9e6,#72c64f,#b09479,#ab84f3)">أسطوري</span>`:SP[sp].e.map(e=>`<span class="chip" style="--c:${EL[e].c}">${EL[e].n}</span>`).join(' ')}
+
+/* ---------- Art (procedural, original) ---------- */
+let uid=0;
+function dragonSVG(sp,cls=''){
+  const s=SP[sp],a=EL[s.e[0]],b=EL[s.e[1]||s.e[0]];
+  let body=a.c,dark=a.d,wing=s.e[1]?b.c:a.d,wingD=s.e[1]?b.d:a.d,belly=a.l,defs='';
+  if(s.leg){const id='lg'+(++uid);defs=`<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#ff7f45"/><stop offset=".35" stop-color="#ffd04d"/><stop offset=".7" stop-color="#45a9e6"/><stop offset="1" stop-color="#ab84f3"/></linearGradient></defs>`;body=`url(#${id})`;dark='#5b3ea6';wing='#fff2c2';wingD='#ffd04d';belly='#fff7df'}
+  const spikes=[46,56,66].map(x=>`<path d="M${x} 44 l5 -9 l5 9z" fill="${wingD}"/>`).join('');
+  return `<svg class="drg ${cls}" viewBox="0 0 120 100" aria-hidden="true">${defs}<g class="bob">
+  <path class="tail" d="M32 68 Q10 74 4 54 Q2 46 8 44 Q10 56 30 58z" fill="${dark}"/>
+  <path class="wing back" d="M54 48 L44 12 L58 24 L64 10 L72 34z" fill="${wingD}"/>
+  <rect x="40" y="70" width="10" height="18" rx="5" fill="${dark}"/><rect x="64" y="70" width="10" height="18" rx="5" fill="${dark}"/>
+  ${spikes}
+  <ellipse cx="56" cy="62" rx="28" ry="20" fill="${body}"/>
+  <ellipse cx="60" cy="69" rx="17" ry="11" fill="${belly}"/>
+  <rect x="48" y="74" width="10" height="16" rx="5" fill="${body}"/><rect x="70" y="72" width="10" height="16" rx="5" fill="${body}"/>
+  <path d="M72 56 Q84 46 84 30 L96 32 Q94 52 80 66z" fill="${body}"/>
+  <path d="M86 20 L80 4 L92 17z" fill="${belly}"/><path d="M95 18 L99 3 L102 19z" fill="${belly}"/>
+  <ellipse cx="93" cy="29" rx="15" ry="12" fill="${body}"/>
+  <ellipse cx="106" cy="34" rx="10" ry="7.5" fill="${body}"/>
+  <circle cx="111" cy="32" r="1.6" fill="${dark}"/>
+  <path d="M100 39 Q106 41 113 38" stroke="${dark}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <circle cx="95" cy="26" r="4.6" fill="#fff"/><circle cx="96.4" cy="26" r="2.4" fill="#14262b"/><circle cx="97.2" cy="25" r=".9" fill="#fff"/>
+  <path class="wing" d="M58 52 L48 14 L66 28 L78 10 L84 42z" fill="${wing}" stroke="${wingD}" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M60 48 L56 26 M68 44 L70 26" stroke="${wingD}" stroke-width="1.3" fill="none" class="wing" style="animation:none"/>
+  </g></svg>`;
+}
+function eggSVG(sp){
+  const s=SP[sp],a=EL[s.e[0]],b=EL[s.e[1]||s.e[0]];
+  const base=s.leg?'#fff2c2':a.l,sp1=s.leg?'#ab84f3':b.c,sp2=s.leg?'#ff7f45':a.c;
+  return `<svg viewBox="0 0 60 76" aria-hidden="true"><ellipse cx="30" cy="42" rx="24" ry="31" fill="${base}"/><circle cx="20" cy="30" r="5" fill="${sp1}"/><circle cx="38" cy="22" r="3.5" fill="${sp2}"/><circle cx="37" cy="48" r="6" fill="${sp1}"/><circle cx="19" cy="55" r="3.5" fill="${sp2}"/><ellipse cx="22" cy="20" rx="5" ry="8" fill="#fff" opacity=".45"/></svg>`;
+}
+const TABICON={
+  island:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18c3 2 6 2 9 0s6-2 9 0"/><path d="M12 15V6m0 0c-2-2-5-2-7 0m7 0c2-2 5-2 7 0m-7 0c-1 2-1 4 0 5"/></svg>',
+  farm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V9"/><path d="M12 13c-4 0-6-2-6-6 4 0 6 2 6 6zm0-2c0-4 2-6 6-6 0 4-2 6-6 6z"/><path d="M4 21h16"/></svg>',
+  cave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="13" rx="6" ry="8"/><path d="M9 11l2 2 3-3" stroke-linecap="round"/></svg>',
+  arena:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19L17 7m0 0V3h4v4h-4M19 19L7 7m0 0V3H3v4h4"/></svg>',
+  shop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 9h16l-1.5 11h-13z"/><path d="M8 9a4 4 0 018 0"/></svg>',
+};
+
+/* ---------- Core simulation ---------- */
+function accrue(dtMs){
+  for(const h of S.habitats){h.gold=Math.min(HAB_CAP,h.gold+habRate(h)*dtMs/60000)}
+}
+function findHome(sp){
+  return S.habitats.find(h=>(SP[sp].leg||SP[sp].e.includes(h.el))&&inHab(h).length<HAB_SLOTS);
+}
+function outcomes(a,b){
+  const E=new Set([...SP[a.sp].e,...SP[b.sp].e]);
+  const list=Object.keys(SP).filter(k=>!SP[k].leg&&SP[k].e.every(x=>E.has(x)));
+  if(E.size>=4)list.push('fajr');
+  return list;
+}
+function rollBreed(a,b){
+  const E=new Set([...SP[a.sp].e,...SP[b.sp].e]);
+  if(E.size>=4&&Math.random()<0.08)return 'fajr';
+  const c=Object.keys(SP).filter(k=>!SP[k].leg&&SP[k].e.every(x=>E.has(x)));
+  const w=c.map(k=>SP[k].e.length===1?3:2);let r=Math.random()*w.reduce((x,y)=>x+y,0);
+  for(let i=0;i<c.length;i++){r-=w[i];if(r<=0)return c[i]}return c[0];
+}
+const hatchTime=sp=>SP[sp].leg?120e3:SP[sp].e.length>1?45e3:15e3;
+const breedTime=sp=>SP[sp].leg?90e3:SP[sp].e.length>1?40e3:20e3;
+function step(){
+  const t=now();
+  if(S.breed&&t>=S.breed.ready&&S.eggs.length<EGG_SLOTS){
+    const sp=S.breed.sp;S.eggs.push({id:S.nid++,sp,ready:t+hatchTime(sp)});S.breed=null;S.st.breed++;
+    toast(`وُضعت بيضة جديدة في الحاضنة`);save();
+  }
+}
+
+/* ---------- UI shell ---------- */
+let tab='island',B=null,pickA=null,pickB=null,lastSig='';
+const TABS=[['island','الجزيرة'],['farm','المزارع'],['cave','الكهف'],['arena','الحلبة'],['shop','المتجر']];
+function renderHud(){
+  $('#hud').innerHTML=`<div class="brand">جزيرة التنانين<small>ربِّ · زاوج · قاتل</small></div>
+  <div class="pill" title="ذهب">${ic('gold')}<span class="num" id="h-gold">${fmt(S.gold)}</span></div>
+  <div class="pill" title="طعام">${ic('food')}<span class="num" id="h-food">${fmt(S.food)}</span></div>
+  <div class="pill" title="جواهر">${ic('gems')}<span class="num" id="h-gems">${fmt(S.gems)}</span></div>`;
+}
+function renderTabs(){
+  const t=now();
+  const caveDot=S.eggs.some(e=>t>=e.ready)||(!S.breed&&S.dragons.filter(d=>d.lvl>=3).length>=2&&S.eggs.length<EGG_SLOTS);
+  const farmDot=S.farms.some(f=>f.crop&&t>=f.ready);
+  const islandDot=S.habitats.some(h=>h.gold>=HAB_CAP)||goalReady();
+  $('#tabs').innerHTML=`<div class="tabs-in">${TABS.map(([k,n])=>`<button class="tab" data-tab="${k}" ${tab===k?'aria-current="page"':''}>${TABICON[k]}${n}${(k==='cave'&&caveDot)||(k==='farm'&&farmDot)||(k==='island'&&islandDot)?'<span class="dot"></span>':''}</button>`).join('')}</div>`;
+}
+function goalReady(){const g=GOALS[S.goal];return g&&g.c(S)}
+function render(){
+  renderHud();renderTabs();
+  const v=$('#view');
+  v.innerHTML=({island:vIsland,farm:vFarm,cave:vCave,arena:vArena,shop:vShop})[tab]();
+  lastSig=sig();
+}
+function sig(){
+  const t=now();
+  return [tab,S.farms.map(f=>f.crop?(t>=f.ready?'R':'G'):'E').join(''),S.breed?(t>=S.breed.ready?'R':'G'):'N',S.eggs.map(e=>t>=e.ready?'R':'G').join(''),goalReady()?1:0,S.habitats.map(h=>h.gold>=1?1:0).join('')].join('|');
+}
+function live(){
+  $('#h-gold')&&($('#h-gold').textContent=fmt(S.gold));
+  $('#h-food')&&($('#h-food').textContent=fmt(S.food));
+  $('#h-gems')&&($('#h-gems').textContent=fmt(S.gems));
+  const t=now();
+  document.querySelectorAll('[data-live]').forEach(el=>{
+    const [k,id]=el.dataset.live.split(':');
+    if(k==='hg'){const h=byId(S.habitats,id);if(h)el.textContent=fmt(h.gold)}
+    else if(k==='hb'){const h=byId(S.habitats,id);if(h)el.style.width=(h.gold/HAB_CAP*100)+'%'}
+    else if(k==='ft'){const f=byId(S.farms,id);if(f&&f.crop)el.textContent=fmtT(f.ready-t)}
+    else if(k==='fb'){const f=byId(S.farms,id);if(f&&f.crop){const p=1-(f.ready-t)/CROPS[f.crop].t;el.style.width=Math.min(100,p*100)+'%';}}
+    else if(k==='fs'){const f=byId(S.farms,id);if(f&&f.crop){const p=Math.min(1,1-(f.ready-t)/CROPS[f.crop].t);el.style.height=(14+p*56)+'px'}}
+    else if(k==='fg'){const f=byId(S.farms,id);if(f&&f.crop)el.textContent=gemCost(f.ready-t)}
+    else if(k==='et'){const e=byId(S.eggs,id);if(e)el.textContent=fmtT(e.ready-t)}
+    else if(k==='eg'){const e=byId(S.eggs,id);if(e)el.textContent=gemCost(e.ready-t)}
+    else if(k==='bt'){if(S.breed)el.textContent=fmtT(S.breed.ready-t)}
+    else if(k==='bg'){if(S.breed)el.textContent=gemCost(S.breed.ready-t)}
+  });
+}
+
+/* ---------- Views ---------- */
+function goalBanner(){
+  const g=GOALS[S.goal];
+  if(!g)return `<div class="goal"><span class="tag">كل الأهداف</span><p>أنهيت كل الأهداف. استمر في تربية أقوى التنانين وتسلّق الحلبة.</p></div>`;
+  const ok=g.c(S);
+  return `<div class="goal"><span class="tag">هدف ${S.goal+1}/${GOALS.length}</span><p>${g.t}<br><span class="muted" style="font-size:13px">المكافأة: ${costHTML(g.r)}</span></p>${ok?`<button class="btn sm" data-act="claim">استلم</button>`:''}</div>`;
+}
+function vIsland(){
+  const habs=S.habitats.map(h=>{
+    const ds=inHab(h),e=EL[h.el];
+    const slots=ds.map(d=>`<button class="drgbtn" data-act="dragon" data-id="${d.id}" aria-label="${dname(d.sp)} المستوى ${d.lvl}"><span class="lv">${d.lvl}</span>${dragonSVG(d.sp)}</button>`).join('')+
+      Array(HAB_SLOTS-ds.length).fill('<div class="empty-slot"></div>').join('');
+    return `<article class="hab" style="--g1:${e.d}">
+      <div class="hab-top"><h3>موطن ${e.n}</h3><span class="muted">${ds.length} من ${HAB_SLOTS} · <span class="num">${fmt(habRate(h))}</span> ذهب/دقيقة</span></div>
+      <div class="ground" style="--g1:${e.d}">${slots}</div>
+      <div class="hab-bot"><div class="bar"><i data-live="hb:${h.id}" style="width:${h.gold/HAB_CAP*100}%"></i></div>
+      <button class="btn sm alt" data-act="collect" data-id="${h.id}" ${h.gold<1?'disabled':''}>${ic('gold')}<span class="num" data-live="hg:${h.id}">${fmt(h.gold)}</span></button></div>
+    </article>`;
+  }).join('');
+  return `${goalBanner()}
+  <div class="section-head"><h2>مواطن التنانين</h2><span class="muted">اضغط على تنين لإطعامه. الذهب يتراكم حتى ${HAB_CAP} في كل موطن.</span></div>
+  <div class="grid">${habs}
+    <div class="build"><p>كل عنصر يحتاج موطنه. التنين الهجين يسكن موطن أي من عنصريه.</p><button class="btn ghost" data-tab="shop">ابنِ موطنًا جديدًا</button></div>
+  </div>`;
+}
+function vFarm(){
+  const t=now();
+  const farms=S.farms.map((f,i)=>{
+    let body;
+    if(!f.crop){
+      body=`<div class="soil"></div><div class="crops">${Object.entries(CROPS).map(([k,c])=>`<div class="crop"><div><b>${c.n}</b><small>${fmtT(c.t)} ← ${fmt(c.food)} طعام</small></div><button class="btn sm" data-act="plant" data-id="${f.id}" data-crop="${k}" ${S.gold<c.cost?'disabled':''}>${ic('gold')}<span class="num">${c.cost}</span></button></div>`).join('')}</div>`;
+    }else{
+      const c=CROPS[f.crop],ripe=t>=f.ready,p=Math.min(1,1-(f.ready-t)/c.t);
+      const sprouts=Array(6).fill(0).map(()=>`<div class="sprout ${ripe?'ripe':''}" style="--cc:${c.c};height:${ripe?70:14+p*56}px" ${ripe?'':`data-live="fs:${f.id}"`}></div>`).join('');
+      body=`<div class="soil">${sprouts}</div>
+      <div class="row"><b style="font-family:var(--display);font-weight:400;font-size:18px">${c.n}</b><span class="muted">${ripe?'ناضج':'ينمو'}</span></div>
+      ${ripe?`<button class="btn" data-act="harvest" data-id="${f.id}">احصد ${ic('food')}<span class="num">${c.food}</span></button>`:
+      `<div class="row"><div class="bar food"><i data-live="fb:${f.id}" style="width:${p*100}%"></i></div><span class="num" data-live="ft:${f.id}">${fmtT(f.ready-t)}</span></div>
+      <button class="btn sm gem" data-act="rushFarm" data-id="${f.id}">أنهِ الآن ${ic('gems')}<span class="num" data-live="fg:${f.id}">${gemCost(f.ready-t)}</span></button>`}`;
+    }
+    return `<article class="farm"><h3>حقل ${i+1}</h3>${body}</article>`;
+  }).join('');
+  const fc=100*S.farms.length;
+  return `<div class="section-head"><h2>المزارع</h2><span class="muted">الطعام يرفع مستوى التنانين، والمستوى الأعلى يعني ذهبًا وقوة أكثر.</span></div>
+  <div class="grid">${farms}${S.farms.length<MAX_FARMS?`<div class="build"><p>حقل إضافي</p><button class="btn ghost" data-act="buyFarm" ${S.gold<fc?'disabled':''}>${ic('gold')}<span class="num">${fc}</span></button></div>`:''}</div>`;
+}
+function vCave(){
+  const t=now(),eligible=S.dragons.filter(d=>d.lvl>=3);
+  const A=byId(S.dragons,pickA),Bd=byId(S.dragons,pickB);
+  let breedBox;
+  if(S.breed){
+    const ready=t>=S.breed.ready;
+    breedBox=`<div class="pair"><div class="slot filled">${dragonSVG(byId(S.dragons,S.breed.a)?.sp||'shula')}</div><div class="heart">+</div><div class="slot filled">${dragonSVG(byId(S.dragons,S.breed.b)?.sp||'shula')}</div></div>
+      ${ready?`<p>البيضة جاهزة لكن الحاضنة ممتلئة. افقس بيضة أولًا.</p>`:`<div class="row"><p>التنينان يعتنيان ببيضتهما… <span class="num" data-live="bt">${fmtT(S.breed.ready-t)}</span></p>
+      <button class="btn sm gem" data-act="rushBreed">أنهِ الآن ${ic('gems')}<span class="num" data-live="bg">${gemCost(S.breed.ready-t)}</span></button></div>`}`;
+  }else{
+    const slot=(d,w)=>`<button class="slot ${d?'filled':''}" data-act="clearPick" data-w="${w}">${d?dragonSVG(d.sp)+`<span>${dname(d.sp)} · م${d.lvl}</span>`:'اختر تنينًا من الأسفل'}</button>`;
+    const outs=A&&Bd?outcomes(A,Bd):[];
+    breedBox=`<div class="pair">${slot(A,'a')}<div class="heart">+</div>${slot(Bd,'b')}</div>
+    ${A&&Bd?`<p class="muted">النتائج الممكنة:</p><div class="outcomes">${outs.map(k=>`<span class="chip" style="--c:${SP[k].leg?'#ffd04d':EL[SP[k].e[1]||SP[k].e[0]].c}">${SP[k].n}</span>`).join('')}</div>`:''}
+    <div class="row" style="margin-top:12px"><button class="btn" data-act="breed" ${A&&Bd&&S.eggs.length<EGG_SLOTS?'':'disabled'}>ابدأ التزاوج</button>
+    ${S.eggs.length>=EGG_SLOTS?'<span class="muted">الحاضنة ممتلئة</span>':''}</div>
+    ${eligible.length<2?`<p class="muted" style="margin-top:10px">تحتاج تنينين بالمستوى 3 أو أعلى. أطعم تنانينك في الجزيرة.</p>`:
+    `<div class="picker">${eligible.map(d=>`<button class="pick" data-act="pick" data-id="${d.id}" aria-pressed="${d.id==pickA||d.id==pickB}">${dragonSVG(d.sp)}<span>${SP[d.sp].n} · م${d.lvl}</span></button>`).join('')}</div>`}`;
+  }
+  const eggs=S.eggs.map(e=>{const r=t>=e.ready;return `<div class="egg ${r?'ready':''}">${eggSVG(e.sp)}
+    ${r?`<b style="font-family:var(--display);font-weight:400">${dname(e.sp)}</b><button class="btn sm" data-act="hatch" data-id="${e.id}">افقس</button>`:
+    `<span class="num" data-live="et:${e.id}">${fmtT(e.ready-t)}</span><button class="btn sm gem" data-act="rushEgg" data-id="${e.id}">${ic('gems')}<span class="num" data-live="eg:${e.id}">${gemCost(e.ready-t)}</span></button>`}</div>`}).join('')+
+    Array(EGG_SLOTS-S.eggs.length).fill('<div class="egg" style="opacity:.45;justify-content:center;min-height:150px"><span class="muted">مكان فارغ</span></div>').join('');
+  return `<div class="section-head"><h2>كهف التزاوج</h2><span class="muted">اجمع عنصرين مختلفين لتحصل على تنين هجين نادر.</span></div>
+  <section class="cave">${breedBox}</section>
+  <div class="section-head" style="margin-top:22px"><h2>الحاضنة</h2><span class="muted">${S.eggs.length}/${EGG_SLOTS}</span></div>
+  <div class="eggs">${eggs}</div>`;
+}
+function fighter(d){
+  const s=SP[d.sp],k=(s.leg?1.6:1+0.15*(s.e.length-1));
+  const hp=Math.round((50+d.lvl*18)*k);
+  return {sp:d.sp,lvl:d.lvl,hp,max:hp,atk:Math.round((7+d.lvl*3)*k),cd:0,id:d.id};
+}
+function foeFor(stage){
+  const lvl=Math.min(MAX_LVL,1+Math.floor(stage*0.9)),boss=(stage+1)%5===0;
+  const pool=Object.keys(SP).filter(k=>!SP[k].leg&&(stage<3?SP[k].e.length===1:true));
+  let sp=pool[Math.floor(Math.random()*pool.length)];
+  if(boss){const hy=pool.filter(k=>SP[k].e.length>1);sp=hy.length?hy[Math.floor(Math.random()*hy.length)]:sp}
+  const f=fighter({sp,lvl:Math.min(MAX_LVL,lvl+(boss?1:0))});
+  if(boss){f.hp=f.max=Math.round(f.max*1.25)}
+  return f;
+}
+const reward=s=>({gold:40+s*35,food:10+s*6,gems:(s+1)%5===0?3:1});
+function mult(a,b){const A=SP[a].e,D=SP[b].e;if(A.some(x=>D.includes(BEATS[x])))return 1.5;if(D.some(x=>A.includes(BEATS[x])))return 0.7;return 1}
+function vArena(){
+  if(B)return vBattle();
+  const ladder=Array.from({length:Math.max(10,S.stage+4)},(_,i)=>`<div class="rung ${i<S.stage?'done':i===S.stage?'now':''} ${(i+1)%5===0?'boss':''}">${i+1}</div>`).join('');
+  const chart=ELS.map(e=>`<span class="chip" style="--c:${EL[e].c}">${EL[e].n}</span> <span class="muted">يغلب</span> <span class="chip" style="--c:${EL[BEATS[e]].c}">${EL[BEATS[e]].n}</span>`).join('<br>');
+  return `<div class="section-head"><h2>الحلبة</h2><span class="muted">الجولة ${S.stage+1} · المكافأة ${costHTML(reward(S.stage))}</span></div>
+  <div class="ladder">${ladder}</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+    <section class="cave"><h3>اختر مقاتلك</h3><div class="picker">${S.dragons.map(d=>`<button class="pick" data-act="fight" data-id="${d.id}">${dragonSVG(d.sp)}<span>${SP[d.sp].n} · م${d.lvl}</span></button>`).join('')}</div></section>
+    <section class="cave"><h3>دائرة العناصر</h3><p style="margin-top:10px;line-height:2.2">${chart}</p><p class="muted" style="margin-top:8px">الضربة القوية تُضاعف ×1.5 ضد العنصر الضعيف، وتنخفض إلى ×0.7 ضد العنصر الأقوى.</p></section>
+  </div>`;
+}
+function vBattle(){
+  const bar=f=>`<div class="hp"><b>${SP[f.sp].n} · م${f.lvl}</b><span class="num muted" dir="ltr">${Math.max(0,f.hp)} / ${f.max}</span><div class="bar ${f.hp/f.max<.3?'low':''}"><i style="width:${Math.max(0,f.hp)/f.max*100}%"></i></div></div>`;
+  const my=B.turn==='me'&&!B.over;
+  return `<div class="section-head"><h2>الجولة ${S.stage+1}${(S.stage+1)%5===0?' · زعيم':''}</h2><button class="btn sm ghost" data-act="flee">انسحب</button></div>
+  <div class="stage"><div class="fighter me" id="f-me">${bar(B.me)}${dragonSVG(B.me.sp)}</div><div class="fighter foe" id="f-foe">${bar(B.foe)}${dragonSVG(B.foe.sp)}</div></div>
+  <div class="moves">${B.over?`<button class="btn" data-act="endBattle">${B.won?'استلم المكافأة':'عُد إلى الحلبة'}</button>`:
+  `<button class="btn" data-act="move" data-m="bite" ${my?'':'disabled'}>عضّة</button>
+   <button class="btn alt" data-act="move" data-m="breath" ${my&&B.me.cd===0?'':'disabled'}>نَفَس ${SP[B.me.sp].leg?'الفجر':EL[SP[B.me.sp].e[0]].n}${B.me.cd?` (${B.me.cd})`:''}</button>
+   <button class="btn ghost" data-act="move" data-m="guard" ${my?'':'disabled'}>دفاع</button>`}</div>
+  <div class="log">${B.log.slice(0,4).map(l=>`<p>${l}</p>`).join('')}</div>`;
+}
+function vShop(){
+  const eggs=Object.keys(SP).filter(k=>SP[k].price).map(k=>`<div class="shop-item">${dragonSVG(k)}<div><h3>بيضة ${dname(k)}</h3><div style="margin-block:4px">${chips(k)}</div><span class="muted" style="font-size:13px">${SP[k].g} ذهب/دقيقة لكل مستوى</span></div><button class="btn sm" data-act="buyEgg" data-sp="${k}" ${S.gold<SP[k].price||S.eggs.length>=EGG_SLOTS?'disabled':''}>${ic('gold')}<span class="num">${SP[k].price}</span></button></div>`).join('');
+  const habs=ELS.map(e=>{const c=habCost(e);return `<div class="shop-item"><div><h3>موطن ${EL[e].n}</h3><span class="muted" style="font-size:13px">يتسع لـ ${HAB_SLOTS} تنانين · لديك ${S.habitats.filter(h=>h.el===e).length}</span></div><button class="btn sm" data-act="buyHab" data-el="${e}" ${S.gold<c||S.habitats.length>=MAX_HABS?'disabled':''}>${ic('gold')}<span class="num">${fmt(c)}</span></button></div>`}).join('');
+  const goals=GOALS.map((g,i)=>`<li class="${i<S.goal?'ok':i===S.goal?'cur':''}"><span class="st">${i<S.goal?'✓':i+1}</span><span style="flex:1">${g.t}</span>${costHTML(g.r)}</li>`).join('');
+  return `<div class="section-head"><h2>المتجر</h2>${S.eggs.length>=EGG_SLOTS?'<span class="muted">الحاضنة ممتلئة. افقس بيضة لتشتري أخرى.</span>':''}</div>
+  <h3 style="margin-bottom:10px">بيض التنانين</h3><div class="grid">${eggs}</div>
+  <h3 style="margin-block:22px 10px">المواطن</h3><div class="grid">${habs}</div>
+  <h3 style="margin-block:22px 10px">صرف الجواهر</h3><div class="grid"><div class="shop-item"><div><h3>كيس ذهب</h3><span class="muted" style="font-size:13px">جوهرة واحدة = 60 ذهب</span></div><button class="btn sm gem" data-act="swap" ${S.gems<1?'disabled':''}>${ic('gems')}<span class="num">1</span></button></div>
+  <div class="shop-item"><div><h3>سلة طعام</h3><span class="muted" style="font-size:13px">جوهرة واحدة = 40 طعام</span></div><button class="btn sm gem" data-act="swapFood" ${S.gems<1?'disabled':''}>${ic('gems')}<span class="num">1</span></button></div></div>
+  <h3 style="margin-block:22px 10px">الأهداف</h3><section class="cave"><ul class="goals">${goals}</ul></section>
+  <div class="row" style="margin-top:22px"><button class="btn sm ghost" data-act="reset" id="resetBtn">ابدأ جزيرة جديدة</button></div>`;
+}
+const habCost=e=>HAB_BASE[e]*(1+S.habitats.filter(h=>h.el===e).length);
+
+/* ---------- Modal ---------- */
+let modalId=null;
+function openDragon(id){modalId=id;renderModal();$('#modal').hidden=false}
+function renderModal(){
+  const d=byId(S.dragons,modalId);if(!d){closeModal();return}
+  const h=byId(S.habitats,d.hab),max=d.lvl>=MAX_LVL,c=feedCost(d),f=fighter(d);
+  $('#modal').innerHTML=`<div class="sheet" role="dialog" aria-label="${dname(d.sp)}">
+    <div class="row" style="justify-content:space-between"><h2>${dname(d.sp)}</h2><button class="btn sm ghost" data-act="close">إغلاق</button></div>
+    <div>${chips(d.sp)}</div>
+    <div class="hero" style="--g1:${EL[h?h.el:SP[d.sp].e[0]].d}" id="mhero">${dragonSVG(d.sp)}</div>
+    <div class="stats"><div><b class="num">${d.lvl}</b><small>المستوى</small></div><div><b class="num">${rate(d)}</b><small>ذهب/دقيقة</small></div><div><b class="num">${f.atk}</b><small>قوة الهجوم</small></div></div>
+    ${max?'<p class="muted">وصل إلى أعلى مستوى.</p>':`<button class="btn" data-act="feed" data-id="${d.id}" ${S.food<c?'disabled':''}>أطعم ← المستوى ${d.lvl+1} · ${ic('food')}<span class="num">${c}</span></button>
+    ${S.food<c?'<p class="muted">طعام غير كافٍ. ازرع المزيد في المزارع.</p>':''}`}
+  </div>`;
+}
+function closeModal(){$('#modal').hidden=true;modalId=null}
+
+/* ---------- Feedback ---------- */
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2400)}
+function floatText(el,txt,color){
+  if(!el)return;const r=el.getBoundingClientRect(),f=document.createElement('div');
+  f.className='float';f.textContent=txt;f.style.color=color;f.style.left=(r.left+r.width/2-20)+'px';f.style.top=(r.top-6)+'px';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),1200);
+}
+
+/* ---------- Actions ---------- */
+const ACT={
+  claim(){const g=GOALS[S.goal];if(!g||!g.c(S))return;give(g.r);S.goal++;toast('تم استلام مكافأة الهدف');},
+  collect(el){const h=byId(S.habitats,el.dataset.id);const n=Math.floor(h.gold);if(n<1)return;S.gold+=n;h.gold-=n;S.st.collect++;floatText(el,'+'+n,'#ffd04d');},
+  dragon(el){openDragon(+el.dataset.id);return 'keep'},
+  close(){closeModal();return 'keep'},
+  feed(el){const d=byId(S.dragons,el.dataset.id),c=feedCost(d);if(S.food<c||d.lvl>=MAX_LVL)return;S.food-=c;d.lvl++;renderModal();
+    const hero=$('#mhero .drg');hero&&hero.classList.add('happy');floatText($('#mhero'),'مستوى '+d.lvl,'#9ee07f');},
+  plant(el){const f=byId(S.farms,el.dataset.id),c=CROPS[el.dataset.crop];if(S.gold<c.cost)return;S.gold-=c.cost;f.crop=el.dataset.crop;f.ready=now()+c.t;S.st.plant++;},
+  harvest(el){const f=byId(S.farms,el.dataset.id),c=CROPS[f.crop];S.food+=c.food;f.crop=null;S.st.harvest++;floatText(el,'+'+c.food,'#9ee07f');},
+  rushFarm(el){const f=byId(S.farms,el.dataset.id),g=gemCost(f.ready-now());if(S.gems<g)return toast('جواهر غير كافية'),'keep';S.gems-=g;f.ready=now();},
+  buyFarm(){const c=100*S.farms.length;if(S.gold<c)return;S.gold-=c;S.farms.push({id:S.nid++,crop:null,ready:0});},
+  pick(el){const id=+el.dataset.id;if(pickA===id)pickA=null;else if(pickB===id)pickB=null;else if(pickA==null)pickA=id;else if(pickB==null)pickB=id;else pickB=id;},
+  clearPick(el){if(el.dataset.w==='a')pickA=null;else pickB=null;},
+  breed(){const a=byId(S.dragons,pickA),b=byId(S.dragons,pickB);if(!a||!b||S.breed)return;const sp=rollBreed(a,b);S.breed={a:a.id,b:b.id,sp,ready:now()+breedTime(sp)};pickA=pickB=null;toast('بدأ التزاوج');},
+  rushBreed(){const g=gemCost(S.breed.ready-now());if(S.gems<g)return toast('جواهر غير كافية'),'keep';S.gems-=g;S.breed.ready=now();step();},
+  rushEgg(el){const e=byId(S.eggs,el.dataset.id),g=gemCost(e.ready-now());if(S.gems<g)return toast('جواهر غير كافية'),'keep';S.gems-=g;e.ready=now();},
+  hatch(el){const e=byId(S.eggs,el.dataset.id),home=findHome(e.sp);
+    if(!home){const need=SP[e.sp].e.map(x=>EL[x].n).join(' أو ');toast(`لا يوجد مكان. ابنِ موطن ${need} أو أفرغ مكانًا.`);return 'keep'}
+    S.eggs=S.eggs.filter(x=>x!==e);const d={id:S.nid++,sp:e.sp,lvl:1,hab:home.id};S.dragons.push(d);S.st.hatch++;
+    toast(SP[e.sp].leg?'فقس تنين الفجر الأسطوري!':`فقس ${dname(e.sp)} وانتقل إلى موطن ${EL[home.el].n}`);step();},
+  buyEgg(el){const sp=el.dataset.sp,p=SP[sp].price;if(S.gold<p||S.eggs.length>=EGG_SLOTS)return;S.gold-=p;S.eggs.push({id:S.nid++,sp,ready:now()+hatchTime(sp)});toast('البيضة في الحاضنة داخل الكهف');},
+  buyHab(el){const e=el.dataset.el,c=habCost(e);if(S.gold<c||S.habitats.length>=MAX_HABS)return;S.gold-=c;S.habitats.push({id:S.nid++,el:e,gold:0});toast(`بُني موطن ${EL[e].n}`);},
+  swap(){if(S.gems<1)return;S.gems--;S.gold+=60;},
+  swapFood(){if(S.gems<1)return;S.gems--;S.food+=40;},
+  reset(el){if(el.dataset.armed){S=newState();pickA=pickB=null;B=null;tab='island';toast('بدأت جزيرة جديدة');return}
+    el.dataset.armed='1';el.textContent='اضغط مرة أخرى لحذف التقدم';el.style.color='var(--danger)';return 'keep'},
+  fight(el){const d=byId(S.dragons,el.dataset.id);B={me:fighter(d),foe:foeFor(S.stage),turn:'me',over:false,won:false,guard:{me:false,foe:false},log:[]};B.log.unshift(`ظهر ${dname(B.foe.sp)} بالمستوى ${B.foe.lvl}. دورك.`);},
+  move(el){if(!B||B.turn!=='me'||B.over)return 'keep';doMove('me','foe',el.dataset.m);},
+  flee(){B=null;},
+  endBattle(){if(B.won){const r=reward(S.stage);give(r);S.stage++;S.st.wins++;toast('ربحت المعركة');}B=null;},
+};
+function doMove(who,tgt,m){
+  const A=B[who],D=B[tgt],me=who==='me',nm=me?SP[A.sp].n:SP[A.sp].n+' الخصم';
+  B.guard[who]=false;
+  if(m==='guard'){B.guard[who]=true;A.hp=Math.min(A.max,A.hp+Math.round(A.max*0.06));B.log.unshift(`${nm} يحتمي ويستعيد بعض قوته.`);}
+  else{
+    let base=A.atk*(0.85+Math.random()*0.3),mu=1,txt='';
+    if(m==='breath'){mu=mult(A.sp,D.sp);base*=1.7*mu;A.cd=3;txt=mu>1?' ضربة فعّالة جدًا!':mu<1?' غير فعّالة.':''}
+    if(B.guard[tgt])base*=0.5;
+    const dmg=Math.max(1,Math.round(base));D.hp-=dmg;
+    B.log.unshift(`${nm} ${m==='breath'?'يطلق نفسًا عنصريًا':'يعضّ'}: ${dmg} ضرر.${txt}`);
+  }
+  if(A.cd>0&&m!=='breath')A.cd--;
+  if(D.hp<=0){B.over=true;B.won=me;B.log.unshift(me?`انتصرت! ${costHTML(reward(S.stage))}`:'خسرت هذه الجولة. أطعم تنينك وحاول مجددًا.');}
+  else B.turn=tgt;
+  render();
+  const a=$(me?'#f-me .drg':'#f-foe .drg'),d=$(me?'#f-foe .drg':'#f-me .drg');
+  if(m!=='guard'){a&&a.parentElement.classList.add(me?'lunge-r':'lunge-l');d&&d.classList.add('hit');}
+  if(!B.over&&B.turn==='foe')setTimeout(()=>{if(!B||B.over)return;const f=B.foe,mv=f.cd===0&&Math.random()<.7?'breath':(f.hp<f.max*.3&&Math.random()<.3?'guard':'bite');doMove('foe','me',mv)},800);
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab]');
+  if(t){tab=t.dataset.tab;if(tab!=='cave'){} closeModal();render();window.scrollTo({top:0});return}
+  const a=e.target.closest('[data-act]');
+  if(!a){if(e.target.id==='modal')closeModal();return}
+  const fn=ACT[a.dataset.act];if(!fn)return;
+  const r=fn(a);
+  if(r!=='keep'){render();if(modalId)renderModal();}
+  else renderHud();
+  save();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalId)closeModal()});
+
+/* ---------- Loop & boot ---------- */
+let last=now();
+function tick(){
+  const t=now(),dt=t-last;last=t;accrue(dt);step();
+  if(sig()!==lastSig&&!B)render();else{live();renderTabs()}
+}
+function start(data){
+  S=(data&&data.S)||load()||newState();
+  const off=Math.min(now()-(S.saved||now()),8*3600e3);if(off>0)accrue(off);
+  if(data&&data.tab)tab=data.tab;
+  last=now();render();
+  setInterval(tick,1000);setInterval(save,5000);
+  window.addEventListener('pagehide',save);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+}
+window.claude?.hot?.snapshot?.(()=>({S,tab}));
+window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+</script>
