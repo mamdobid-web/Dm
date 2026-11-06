@@ -131,6 +131,18 @@ button:focus-visible,.drgbtn:focus-visible{outline:3px solid var(--gold);outline
 .log{margin-top:12px;background:#0c2027;border-radius:14px;padding:10px 14px;min-height:72px;font-size:14px;line-height:1.7}
 .log p:first-child{color:var(--sand)}
 
+/* Dex */
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.fbtn{font:inherit;font-weight:700;font-size:13px;border-radius:999px;padding:5px 11px;border:1.5px solid var(--c,var(--line));background:transparent;color:var(--ink);cursor:pointer}
+.fbtn[aria-pressed="true"]{background:var(--c,var(--sand));color:#14262b}
+.dexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.dex{background:var(--basalt);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+.dex b{font-family:var(--display);font-weight:400;font-size:18px}
+.dex small{color:var(--muted);font-size:12px;line-height:1.5}
+.dex-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.dex.unseen .drg{filter:brightness(0) opacity(.45)}
+.dex.unseen .drg *{animation:none}
+.dex.unseen .dex-chips{opacity:.6}
 /* Shop */
 .shop-item{background:var(--basalt);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:12px;align-items:center}
 .shop-item>div{flex:1;min-width:0}
@@ -143,7 +155,7 @@ button:focus-visible,.drgbtn:focus-visible{outline:3px solid var(--gold);outline
 /* Tabs */
 .tabs{position:fixed;inset:auto 0 0;z-index:6;background:#081c22;border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
 .tabs-in{display:flex;gap:4px;width:100%;max-width:620px}
-.tab{flex:1;background:none;border:none;color:var(--muted);font-family:var(--display);font-size:16px;padding:8px 4px 6px;border-radius:12px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab{flex:1;min-width:0;background:none;border:none;color:var(--muted);font-family:var(--display);font-size:15px;padding:8px 4px 6px;border-radius:12px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
 .tab svg{width:24px;height:24px}
 .tab[aria-current="page"]{color:var(--ink);background:#153a44}
 .tab .dot{position:absolute;top:4px;inset-inline-end:22%;width:9px;height:9px;border-radius:50%;background:var(--ember)}
@@ -184,34 +196,41 @@ document.documentElement.lang='ar';document.documentElement.dir='rtl';
 
 /* ---------- Data ---------- */
 const EL={
-  fire:{n:'نار',c:'#ff7f45',d:'#b0401b',l:'#ffd6a3'},
-  water:{n:'ماء',c:'#45a9e6',d:'#1e5f96',l:'#c5ebff'},
-  plant:{n:'نبات',c:'#72c64f',d:'#3a7c28',l:'#dcf6bb'},
-  rock:{n:'صخر',c:'#b09479',d:'#62503f',l:'#eadbc9'},
-  storm:{n:'برق',c:'#ab84f3',d:'#5b3ea6',l:'#ece0ff'},
+  fire:{n:'نار',c:'#ff7f45',d:'#b0401b',l:'#ffd6a3',t:3},
+  water:{n:'ماء',c:'#45a9e6',d:'#1e5f96',l:'#c5ebff',t:3},
+  plant:{n:'نبات',c:'#72c64f',d:'#3a7c28',l:'#dcf6bb',t:3},
+  rock:{n:'صخر',c:'#b09479',d:'#62503f',l:'#eadbc9',t:4},
+  storm:{n:'برق',c:'#ab84f3',d:'#5b3ea6',l:'#ece0ff',t:5},
+  wind:{n:'ريح',c:'#8fd8cf',d:'#3d8c84',l:'#e6fbf7',t:5},
+  metal:{n:'معدن',c:'#aab6c4',d:'#56616f',l:'#e8edf2',t:6},
+  void:{n:'فراغ',c:'#6a55a3',d:'#2b2048',l:'#c4b5ef',t:8,rare:1},
+  light:{n:'نور',c:'#ffe27a',d:'#c49718',l:'#fff9da',t:8,rare:1},
+  shadow:{n:'ظل',c:'#555b6b',d:'#1d2027',l:'#a6adbb',t:8,rare:1},
 };
 const ELS=Object.keys(EL);
-const BEATS={fire:'plant',plant:'rock',rock:'storm',storm:'water',water:'fire'};
-const SP={
-  shula:{n:'شُعلة',e:['fire'],g:3,price:80},
-  ushba:{n:'عُشبة',e:['plant'],g:3,price:100},
-  mawja:{n:'موجة',e:['water'],g:3,price:150},
-  sawwan:{n:'صوّان',e:['rock'],g:4,price:250},
-  raad:{n:'رعد',e:['storm'],g:5,price:400},
-  dabab:{n:'ضباب',e:['fire','water'],g:7},
-  ramad:{n:'رماد',e:['fire','plant'],g:7},
-  burkan:{n:'بركان',e:['fire','rock'],g:8},
-  nayzak:{n:'نيزك',e:['fire','storm'],g:9},
-  mustanqa:{n:'مستنقع',e:['water','plant'],g:7},
-  marjan:{n:'مرجان',e:['water','rock'],g:8},
-  iasar:{n:'إعصار',e:['water','storm'],g:9},
-  tuhlub:{n:'طُحلب',e:['plant','rock'],g:8},
-  rabi:{n:'ربيع',e:['plant','storm'],g:9},
-  sada:{n:'صدى',e:['rock','storm'],g:10},
-  fajr:{n:'الفجر',e:['fire','water','plant','rock','storm'],g:25,leg:true},
-};
-const HAB_BASE={fire:60,plant:100,water:150,rock:250,storm:400};
-const HAB_SLOTS=3, HAB_CAP=400, MAX_HABS=10, MAX_LVL=10, EGG_SLOTS=2, MAX_FARMS=6;
+const BEATS={fire:'plant',plant:'rock',rock:'storm',storm:'water',water:'fire',wind:'metal',metal:'void',void:'light',light:'shadow',shadow:'wind'};
+const SP={};
+// 10 pure dragons
+[['shula','شُعلة','fire',80],['mawja','موجة','water',150],['ushba','عُشبة','plant',100],['sawwan','صوّان','rock',250],['raad','رعد','storm',400],
+ ['zafir','زفير','wind',550],['fulath','فولاذ','metal',750],['adam','عَدَم','void'],['diya','ضياء','light'],['atma','عتمة','shadow']]
+ .forEach(([k,n,e,price])=>SP[k]={n,e:[e],g:EL[e].t,price});
+// rare pure dragons are bred from a three-element recipe
+SP.diya.recipe=['fire','storm','wind'];SP.atma.recipe=['water','rock','metal'];SP.adam.recipe=['storm','wind','metal'];
+// 38 hybrids
+[['dabab','ضباب','fire','water'],['ramad','رماد','fire','plant'],['burkan','بركان','fire','rock'],['nayzak','نيزك','fire','storm'],['lafha','لفحة','fire','wind'],['masbak','مِسبك','fire','metal'],['shams','شمس','fire','light'],['fahm','فحم','fire','shadow'],
+ ['mustanqa','مستنقع','water','plant'],['marjan','مرجان','water','rock'],['iasar','إعصار','water','storm'],['rathath','رذاذ','water','wind'],['sada2','صدأ','water','metal'],['lulu','لؤلؤ','water','light'],['umq','عُمق','water','shadow'],['dawwama','دوّامة','water','void'],
+ ['tuhlub','طُحلب','plant','rock'],['rabi','ربيع','plant','storm'],['hindiba','هندباء','plant','wind'],['shawk','شوك','plant','metal'],['narjis','نرجس','plant','light'],['futr','فِطر','plant','shadow'],
+ ['sada','صدى','rock','storm'],['kuthban','كثبان','rock','wind'],['manjam','منجم','rock','metal'],['hawiya','هاوية','rock','void'],['kahf','كهف','rock','shadow'],
+ ['zawbaa','زوبعة','storm','wind'],['shrara','شرارة','storm','metal'],['wamid','وميض','storm','light'],['najm','نجم','storm','void'],
+ ['nasl','نصل','wind','metal'],['nasim','نسيم','wind','light'],['sadim','سديم','wind','void'],['hams','همس','wind','shadow'],
+ ['muthannab','مذنّب','metal','void'],['mirat','مرآة','metal','light'],['qinaa','قناع','metal','shadow']]
+ .forEach(([k,n,a,b])=>SP[k]={n,e:[a,b],g:EL[a].t+EL[b].t+1});
+// 2 legendaries
+SP.fajr={n:'الفجر',e:['fire','water','plant','rock','storm'],g:30,leg:true,grad:['#ff7f45','#ffd04d','#45a9e6','#ab84f3'],hint:'زاوج هجينين يجمعان 4 عناصر مختلفة'};
+SP.kusuf={n:'الكسوف',e:['light','shadow'],g:35,leg:true,grad:['#fff3b0','#ffe27a','#555b6b','#1d2027'],hint:'زاوج تنين نور مع تنين ظل'};
+const SPN=Object.keys(SP).length; // 50
+const HAB_BASE={fire:60,plant:100,water:150,rock:250,storm:400,wind:500,metal:700,void:1200,light:1200,shadow:1200};
+const HAB_SLOTS=3, HAB_CAP=600, MAX_HABS=20, MAX_LVL=10, EGG_SLOTS=2, MAX_FARMS=6;
 const CROPS={
   wheat:{n:'قمح ذهبي',cost:10,food:20,t:30e3,c:'#f1c44f'},
   berry:{n:'توت الجمر',cost:40,food:90,t:120e3,c:'#ff5d5d'},
@@ -231,6 +250,9 @@ const GOALS=[
   {t:'اربح 5 معارك',c:s=>s.st.wins>=5,r:{gems:10}},
   {t:'ارفع تنينًا إلى المستوى 10',c:s=>s.dragons.some(d=>d.lvl>=10),r:{gems:8}},
   {t:'احصل على تنين الفجر الأسطوري',c:s=>s.dragons.some(d=>d.sp==='fajr'),r:{gems:30}},
+  {t:'اكتشف 25 نوعًا في دليل التنانين',c:s=>s.seen.length>=25,r:{gems:15}},
+  {t:'اكتشف تنين نور أو ظل أو فراغ',c:s=>s.seen.some(k=>['diya','atma','adam'].includes(k)),r:{gems:10}},
+  {t:`أكمل الدليل: كل الأنواع الـ ${SPN}`,c:s=>s.seen.length>=SPN,r:{gems:200}},
 ];
 
 /* ---------- State ---------- */
@@ -241,7 +263,7 @@ function newState(){
     dragons:[{id:2,sp:'shula',lvl:1,hab:1}],
     farms:[{id:3,crop:null,ready:0}],
     eggs:[],breed:null,
-    st:{collect:0,plant:0,harvest:0,hatch:0,breed:0,wins:0}};
+    seen:['shula'],st:{collect:0,plant:0,harvest:0,hatch:0,breed:0,wins:0}};
 }
 let S;
 function load(){
@@ -273,14 +295,14 @@ const ICON={
 };
 const ic=k=>ICON[k];
 function costHTML(c){return Object.entries(c).filter(([,v])=>v).map(([k,v])=>`<span class="reward">${ic(k)}<span class="num">${fmt(v)}</span></span>`).join(' ')}
-function chips(sp){return SP[sp].leg?`<span class="chip" style="--c:linear-gradient(90deg,#ff7f45,#45a9e6,#72c64f,#b09479,#ab84f3)">أسطوري</span>`:SP[sp].e.map(e=>`<span class="chip" style="--c:${EL[e].c}">${EL[e].n}</span>`).join(' ')}
+function chips(sp){return SP[sp].leg?`<span class="chip" style="--c:linear-gradient(90deg,${SP[sp].grad.join(',')})">أسطوري</span>`:SP[sp].e.map(e=>`<span class="chip" style="--c:${EL[e].c}">${EL[e].n}</span>`).join(' ')}
 
 /* ---------- Art (procedural, original) ---------- */
 let uid=0;
 function dragonSVG(sp,cls=''){
   const s=SP[sp],a=EL[s.e[0]],b=EL[s.e[1]||s.e[0]];
   let body=a.c,dark=a.d,wing=s.e[1]?b.c:a.d,wingD=s.e[1]?b.d:a.d,belly=a.l,defs='';
-  if(s.leg){const id='lg'+(++uid);defs=`<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#ff7f45"/><stop offset=".35" stop-color="#ffd04d"/><stop offset=".7" stop-color="#45a9e6"/><stop offset="1" stop-color="#ab84f3"/></linearGradient></defs>`;body=`url(#${id})`;dark='#5b3ea6';wing='#fff2c2';wingD='#ffd04d';belly='#fff7df'}
+  if(s.leg){const id='lg'+(++uid),G=s.grad;defs=`<defs><linearGradient id="${id}" x1="0" x2="1">${G.map((c,i)=>`<stop offset="${i/(G.length-1)}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`;body=`url(#${id})`;dark=G[G.length-1];wing=G[1];wingD=G[0];belly='#fff7df'}
   const spikes=[46,56,66].map(x=>`<path d="M${x} 44 l5 -9 l5 9z" fill="${wingD}"/>`).join('');
   return `<svg class="drg ${cls}" viewBox="0 0 120 100" aria-hidden="true">${defs}<g class="bob">
   <path class="tail" d="M32 68 Q10 74 4 54 Q2 46 8 44 Q10 56 30 58z" fill="${dark}"/>
@@ -303,10 +325,11 @@ function dragonSVG(sp,cls=''){
 }
 function eggSVG(sp){
   const s=SP[sp],a=EL[s.e[0]],b=EL[s.e[1]||s.e[0]];
-  const base=s.leg?'#fff2c2':a.l,sp1=s.leg?'#ab84f3':b.c,sp2=s.leg?'#ff7f45':a.c;
+  const base=s.leg?'#fff2c2':a.l,sp1=s.leg?s.grad[3]:b.c,sp2=s.leg?s.grad[0]:a.c;
   return `<svg viewBox="0 0 60 76" aria-hidden="true"><ellipse cx="30" cy="42" rx="24" ry="31" fill="${base}"/><circle cx="20" cy="30" r="5" fill="${sp1}"/><circle cx="38" cy="22" r="3.5" fill="${sp2}"/><circle cx="37" cy="48" r="6" fill="${sp1}"/><circle cx="19" cy="55" r="3.5" fill="${sp2}"/><ellipse cx="22" cy="20" rx="5" ry="8" fill="#fff" opacity=".45"/></svg>`;
 }
 const TABICON={
+  dex:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 21V5M9 8h6"/></svg>',
   island:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18c3 2 6 2 9 0s6-2 9 0"/><path d="M12 15V6m0 0c-2-2-5-2-7 0m7 0c2-2 5-2 7 0m-7 0c-1 2-1 4 0 5"/></svg>',
   farm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V9"/><path d="M12 13c-4 0-6-2-6-6 4 0 6 2 6 6zm0-2c0-4 2-6 6-6 0 4-2 6-6 6z"/><path d="M4 21h16"/></svg>',
   cave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="13" rx="6" ry="8"/><path d="M9 11l2 2 3-3" stroke-linecap="round"/></svg>',
@@ -321,18 +344,19 @@ function accrue(dtMs){
 function findHome(sp){
   return S.habitats.find(h=>(SP[sp].leg||SP[sp].e.includes(h.el))&&inHab(h).length<HAB_SLOTS);
 }
-function outcomes(a,b){
-  const E=new Set([...SP[a.sp].e,...SP[b.sp].e]);
-  const list=Object.keys(SP).filter(k=>!SP[k].leg&&SP[k].e.every(x=>E.has(x)));
-  if(E.size>=4)list.push('fajr');
-  return list;
+function breedPool(a,b){
+  const E=new Set([...SP[a.sp].e,...SP[b.sp].e]),has=x=>E.has(x);
+  const list=Object.keys(SP).filter(k=>!SP[k].leg&&(SP[k].e.every(has)||(SP[k].recipe&&SP[k].recipe.every(has))));
+  const leg=[];if(E.size>=4)leg.push(['fajr',0.06]);if(has('light')&&has('shadow'))leg.push(['kusuf',0.10]);
+  return {list,leg};
 }
+function outcomes(a,b){const {list,leg}=breedPool(a,b);return list.concat(leg.map(x=>x[0]))}
 function rollBreed(a,b){
-  const E=new Set([...SP[a.sp].e,...SP[b.sp].e]);
-  if(E.size>=4&&Math.random()<0.08)return 'fajr';
-  const c=Object.keys(SP).filter(k=>!SP[k].leg&&SP[k].e.every(x=>E.has(x)));
-  const w=c.map(k=>SP[k].e.length===1?3:2);let r=Math.random()*w.reduce((x,y)=>x+y,0);
-  for(let i=0;i<c.length;i++){r-=w[i];if(r<=0)return c[i]}return c[0];
+  const {list,leg}=breedPool(a,b);
+  for(const [k,p] of leg)if(Math.random()<p)return k;
+  const w=list.map(k=>SP[k].e.length===1?(EL[SP[k].e[0]].rare&&!SP[a.sp].e.includes(SP[k].e[0])&&!SP[b.sp].e.includes(SP[k].e[0])?1:3):2);
+  let r=Math.random()*w.reduce((x,y)=>x+y,0);
+  for(let i=0;i<list.length;i++){r-=w[i];if(r<=0)return list[i]}return list[0];
 }
 const hatchTime=sp=>SP[sp].leg?120e3:SP[sp].e.length>1?45e3:15e3;
 const breedTime=sp=>SP[sp].leg?90e3:SP[sp].e.length>1?40e3:20e3;
@@ -346,7 +370,7 @@ function step(){
 
 /* ---------- UI shell ---------- */
 let tab='island',B=null,pickA=null,pickB=null,lastSig='';
-const TABS=[['island','الجزيرة'],['farm','المزارع'],['cave','الكهف'],['arena','الحلبة'],['shop','المتجر']];
+const TABS=[['island','الجزيرة'],['farm','المزارع'],['cave','الكهف'],['arena','الحلبة'],['dex','الدليل'],['shop','المتجر']];
 function renderHud(){
   $('#hud').innerHTML=`<div class="brand">جزيرة التنانين<small>ربِّ · زاوج · قاتل</small></div>
   <div class="pill" title="ذهب">${ic('gold')}<span class="num" id="h-gold">${fmt(S.gold)}</span></div>
@@ -364,7 +388,7 @@ function goalReady(){const g=GOALS[S.goal];return g&&g.c(S)}
 function render(){
   renderHud();renderTabs();
   const v=$('#view');
-  v.innerHTML=({island:vIsland,farm:vFarm,cave:vCave,arena:vArena,shop:vShop})[tab]();
+  v.innerHTML=({island:vIsland,farm:vFarm,cave:vCave,arena:vArena,dex:vDex,shop:vShop})[tab]();
   lastSig=sig();
 }
 function sig(){
@@ -472,7 +496,7 @@ function fighter(d){
 }
 function foeFor(stage){
   const lvl=Math.min(MAX_LVL,1+Math.floor(stage*0.9)),boss=(stage+1)%5===0;
-  const pool=Object.keys(SP).filter(k=>!SP[k].leg&&(stage<3?SP[k].e.length===1:true));
+  const pool=Object.keys(SP).filter(k=>{const v=SP[k];if(v.leg)return false;if(stage<3)return v.e.length===1&&EL[v.e[0]].t<=5;if(stage<10)return v.e.every(x=>!EL[x].rare);return true});
   let sp=pool[Math.floor(Math.random()*pool.length)];
   if(boss){const hy=pool.filter(k=>SP[k].e.length>1);sp=hy.length?hy[Math.floor(Math.random()*hy.length)]:sp}
   const f=fighter({sp,lvl:Math.min(MAX_LVL,lvl+(boss?1:0))});
@@ -502,6 +526,23 @@ function vBattle(){
    <button class="btn alt" data-act="move" data-m="breath" ${my&&B.me.cd===0?'':'disabled'}>نَفَس ${SP[B.me.sp].leg?'الفجر':EL[SP[B.me.sp].e[0]].n}${B.me.cd?` (${B.me.cd})`:''}</button>
    <button class="btn ghost" data-act="move" data-m="guard" ${my?'':'disabled'}>دفاع</button>`}</div>
   <div class="log">${B.log.slice(0,4).map(l=>`<p>${l}</p>`).join('')}</div>`;
+}
+function howTo(k){
+  const v=SP[k];
+  if(v.leg)return v.hint;
+  if(v.recipe)return 'زاوج تنانين تجمع: '+v.recipe.map(x=>EL[x].n).join(' + ');
+  if(v.e.length===1)return v.price?'يُشترى من المتجر':'يُولد من تزاوج';
+  return 'زاوج: '+v.e.map(x=>EL[x].n).join(' + ');
+}
+let dexF='all';
+function vDex(){
+  const groups=[['أساسية',k=>SP[k].e.length===1&&!EL[SP[k].e[0]].rare],['نادرة',k=>SP[k].e.length===1&&EL[SP[k].e[0]].rare],['هجينة',k=>SP[k].e.length===2&&!SP[k].leg],['أسطورية',k=>SP[k].leg]];
+  const keys=Object.keys(SP).filter(k=>dexF==='all'||SP[k].e.includes(dexF));
+  const card=k=>{const seen=S.seen.includes(k);return `<div class="dex ${seen?'':'unseen'}">${dragonSVG(k)}<b>${seen?SP[k].n:'؟؟؟'}</b><div class="dex-chips">${chips(k)}</div><small>${seen?`${SP[k].g} ذهب/د لكل مستوى`:howTo(k)}</small></div>`};
+  return `<div class="section-head"><h2>دليل التنانين</h2><span class="num" style="font-size:22px;color:var(--sand)">${S.seen.length} / ${SPN}</span></div>
+  <div class="bar" style="flex:none;margin-bottom:14px"><i style="width:${S.seen.length/SPN*100}%"></i></div>
+  <div class="filters"><button class="fbtn" data-act="dexF" data-el="all" aria-pressed="${dexF==='all'}">الكل</button>${ELS.map(e=>`<button class="fbtn" data-act="dexF" data-el="${e}" aria-pressed="${dexF===e}" style="--c:${EL[e].c}">${EL[e].n}</button>`).join('')}</div>
+  ${groups.map(([n,f])=>{const ks=keys.filter(f);return ks.length?`<h3 style="margin-block:18px 10px">${n} <span class="muted num" style="font-size:15px">${ks.filter(k=>S.seen.includes(k)).length}/${ks.length}</span></h3><div class="dexgrid">${ks.map(card).join('')}</div>`:''}).join('')}`;
 }
 function vShop(){
   const eggs=Object.keys(SP).filter(k=>SP[k].price).map(k=>`<div class="shop-item">${dragonSVG(k)}<div><h3>بيضة ${dname(k)}</h3><div style="margin-block:4px">${chips(k)}</div><span class="muted" style="font-size:13px">${SP[k].g} ذهب/دقيقة لكل مستوى</span></div><button class="btn sm" data-act="buyEgg" data-sp="${k}" ${S.gold<SP[k].price||S.eggs.length>=EGG_SLOTS?'disabled':''}>${ic('gold')}<span class="num">${SP[k].price}</span></button></div>`).join('');
@@ -563,12 +604,13 @@ const ACT={
   rushEgg(el){const e=byId(S.eggs,el.dataset.id),g=gemCost(e.ready-now());if(S.gems<g)return toast('جواهر غير كافية'),'keep';S.gems-=g;e.ready=now();},
   hatch(el){const e=byId(S.eggs,el.dataset.id),home=findHome(e.sp);
     if(!home){const need=SP[e.sp].e.map(x=>EL[x].n).join(' أو ');toast(`لا يوجد مكان. ابنِ موطن ${need} أو أفرغ مكانًا.`);return 'keep'}
-    S.eggs=S.eggs.filter(x=>x!==e);const d={id:S.nid++,sp:e.sp,lvl:1,hab:home.id};S.dragons.push(d);S.st.hatch++;
-    toast(SP[e.sp].leg?'فقس تنين الفجر الأسطوري!':`فقس ${dname(e.sp)} وانتقل إلى موطن ${EL[home.el].n}`);step();},
+    S.eggs=S.eggs.filter(x=>x!==e);const d={id:S.nid++,sp:e.sp,lvl:1,hab:home.id};S.dragons.push(d);S.st.hatch++;const isNew=!S.seen.includes(e.sp);if(isNew)S.seen.push(e.sp);
+    toast((isNew?'نوع جديد في الدليل! ':'')+(SP[e.sp].leg?`فقس ${dname(e.sp)} الأسطوري!`:`فقس ${dname(e.sp)} وانتقل إلى موطن ${EL[home.el].n}`));step();},
   buyEgg(el){const sp=el.dataset.sp,p=SP[sp].price;if(S.gold<p||S.eggs.length>=EGG_SLOTS)return;S.gold-=p;S.eggs.push({id:S.nid++,sp,ready:now()+hatchTime(sp)});toast('البيضة في الحاضنة داخل الكهف');},
   buyHab(el){const e=el.dataset.el,c=habCost(e);if(S.gold<c||S.habitats.length>=MAX_HABS)return;S.gold-=c;S.habitats.push({id:S.nid++,el:e,gold:0});toast(`بُني موطن ${EL[e].n}`);},
   swap(){if(S.gems<1)return;S.gems--;S.gold+=60;},
   light(el){S.gems+=1000;floatText(el,'+1000','#7fe6d6');toast('أضاف زر النور 1000 جوهرة');},
+  dexF(el){dexF=el.dataset.el;},
   swapFood(){if(S.gems<1)return;S.gems--;S.food+=40;},
   reset(el){if(el.dataset.armed){S=newState();pickA=pickB=null;B=null;tab='island';toast('بدأت جزيرة جديدة');return}
     el.dataset.armed='1';el.textContent='اضغط مرة أخرى لحذف التقدم';el.style.color='var(--danger)';return 'keep'},
@@ -618,6 +660,7 @@ function tick(){
 }
 function start(data){
   S=(data&&data.S)||load()||newState();
+  S.seen=S.seen||[];S.dragons.forEach(d=>{if(!S.seen.includes(d.sp))S.seen.push(d.sp)});
   const off=Math.min(now()-(S.saved||now()),8*3600e3);if(off>0)accrue(off);
   if(data&&data.tab)tab=data.tab;
   last=now();render();
